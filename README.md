@@ -1,3 +1,1 @@
-```
-nodemon --exec go run main.go --signal SIGTERM
-```
+# meli-challenge
