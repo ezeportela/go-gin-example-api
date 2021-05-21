@@ -1,7 +1,9 @@
 package models
 
+import "gorm.io/gorm"
+
 type Citizen struct {
-	Id          int
+	gorm.Model
 	Name        string
 	Species     string
 	Description string
