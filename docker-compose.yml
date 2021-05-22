@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  api:
+    build: .
+    ports:
+      - 8081:8080
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ~/mongo/challenge:/data/db
+    ports:
+      - 27017:27017
+    restart: unless-stopped
