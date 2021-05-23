@@ -6,21 +6,11 @@ import (
 	"github.com/ezeportela/meli-challenge/models"
 	"github.com/gin-gonic/gin"
 	"github.com/kamva/mgm/v3"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func RegisterHealthCheck(r *gin.Engine) {
+func RegisterHealthCheckController(r *gin.Engine) {
 	r.GET("/healthcheck", func(c *gin.Context) {
 		dt := time.Now()
-
-		err := mgm.SetDefaultConfig(nil, "animalia", options.Client().ApplyURI("mongodb://localhost:27017"))
-
-		if err != nil {
-			c.JSON(409, gin.H{
-				"err": err,
-			})
-			return
-		}
 
 		citizen := &models.Citizen{
 			Name:        "Doge",
@@ -33,7 +23,7 @@ func RegisterHealthCheck(r *gin.Engine) {
 			Roles:       []string{"Civil"},
 		}
 
-		err = mgm.Coll(citizen).Create(citizen)
+		err := mgm.Coll(citizen).Create(citizen)
 
 		if err != nil {
 			c.JSON(409, gin.H{
