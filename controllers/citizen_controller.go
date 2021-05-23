@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/ezeportela/meli-challenge/models"
@@ -21,8 +20,6 @@ func RegisterCitizenController(r *gin.Engine) {
 			})
 			return
 		}
-
-		fmt.Println("body", citizen)
 
 		if err := mgm.Coll(&citizen).Create(&citizen); err != nil {
 			c.JSON(http.StatusConflict, gin.H{
