@@ -25,14 +25,14 @@ func RegisterCitizenController(r *gin.Engine) {
 			c.JSON(http.StatusConflict, gin.H{
 				"error":   err.Error(),
 				"data":    nil,
-				"message": "The Citizen has not been created successfully"})
+				"message": "The citizen has not been created"})
 			return
 		}
 
 		c.JSON(http.StatusCreated, gin.H{
 			"data":    citizen,
 			"error":   "",
-			"message": "The Citizen has been created successfully",
+			"message": "The citizen has been created successfully",
 		})
 	})
 
@@ -54,14 +54,97 @@ func RegisterCitizenController(r *gin.Engine) {
 			c.JSON(http.StatusConflict, gin.H{
 				"error":   err.Error(),
 				"data":    nil,
-				"message": "The Citizen has not been found"})
+				"message": "The citizen has not been found"})
 			return
 		}
 
 		c.JSON(http.StatusOK, gin.H{
 			"data":    citizen,
 			"error":   "",
-			"message": "Citizen data",
+			"message": "citizen data",
+		})
+	})
+
+	r.POST("/citizen/:id", func(c *gin.Context) {
+		var citizen models.Citizen
+
+		id, ok := c.Params.Get("id")
+
+		if !ok {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":   "The id is required",
+				"data":    nil,
+				"message": "Bad Request",
+			})
+			return
+		}
+
+		if err := mgm.Coll(&citizen).FindByID(id, &citizen); err != nil {
+			c.JSON(http.StatusConflict, gin.H{
+				"error":   err.Error(),
+				"data":    nil,
+				"message": "The citizen has not been found"})
+			return
+		}
+
+		if err := c.ShouldBindJSON(&citizen); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":   err.Error(),
+				"data":    nil,
+				"message": "Bad Request",
+			})
+			return
+		}
+
+		if err := mgm.Coll(&citizen).Update(&citizen); err != nil {
+			c.JSON(http.StatusConflict, gin.H{
+				"error":   err.Error(),
+				"data":    nil,
+				"message": "The citizen has not been updated"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"data":    citizen,
+			"error":   "",
+			"message": "The citizen has been updated successfully",
+		})
+	})
+
+	r.DELETE("/citizen/:id", func(c *gin.Context) {
+		var citizen models.Citizen
+
+		id, ok := c.Params.Get("id")
+
+		if !ok {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":   "The id is required",
+				"data":    nil,
+				"message": "Bad Request",
+			})
+			return
+		}
+
+		if err := mgm.Coll(&citizen).FindByID(id, &citizen); err != nil {
+			c.JSON(http.StatusConflict, gin.H{
+				"error":   err.Error(),
+				"data":    nil,
+				"message": "The citizen has not been found"})
+			return
+		}
+
+		if err := mgm.Coll(&citizen).Delete(&citizen); err != nil {
+			c.JSON(http.StatusConflict, gin.H{
+				"error":   err.Error(),
+				"data":    nil,
+				"message": "The citizen has not been deleted"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"data":    citizen,
+			"error":   "",
+			"message": "The citizen has been deleted successfully",
 		})
 	})
 }

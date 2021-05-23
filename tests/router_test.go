@@ -73,7 +73,7 @@ func TestRouter(t *testing.T) {
 		citizen.UpdatedAt = resCitizen.UpdatedAt
 
 		expected := gin.H{
-			"message": "The Citizen has been created successfully",
+			"message": "The citizen has been created successfully",
 			"data":    citizen,
 			"error":   "",
 		}
@@ -97,7 +97,79 @@ func TestRouter(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 
 		expected := gin.H{
-			"message": "Citizen data",
+			"message": "citizen data",
+			"data":    citizen,
+			"error":   "",
+		}
+
+		assert.Equal(t, shared.StringifyInterface(expected), w.Body.String())
+	})
+
+	t.Run("test update citizen endpoint", func(t *testing.T) {
+
+		var citizen models.Citizen
+		err := mgm.Coll(&citizen).First(bson.M{}, &citizen)
+
+		assert.NoError(t, err)
+
+		url := fmt.Sprintf("/citizen/%s", citizen.ID.Hex())
+
+		updates := map[string]string{
+			"name":    "Kitty",
+			"species": "cat",
+		}
+
+		body, err := json.Marshal(updates)
+		b := bytes.NewBuffer(body)
+		assert.NoError(t, err)
+
+		req, err := http.NewRequest("POST", url, b)
+		assert.NoError(t, err)
+
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusOK, w.Code)
+
+		var res map[string]interface{}
+		err = json.Unmarshal(w.Body.Bytes(), &res)
+		assert.NoError(t, err)
+
+		data := res["data"]
+		var resCitizen models.Citizen
+		shared.CastInterface(data, &resCitizen)
+		citizen.Name = resCitizen.Name
+		citizen.Species = resCitizen.Species
+		citizen.CreatedAt = resCitizen.CreatedAt
+		citizen.UpdatedAt = resCitizen.UpdatedAt
+
+		expected := gin.H{
+			"message": "The citizen has been updated successfully",
+			"data":    citizen,
+			"error":   "",
+		}
+
+		assert.Equal(t, shared.StringifyInterface(expected), w.Body.String())
+	})
+
+	t.Run("test delete citizen endpoint", func(t *testing.T) {
+
+		var citizen models.Citizen
+		err := mgm.Coll(&citizen).First(bson.M{}, &citizen)
+
+		assert.NoError(t, err)
+
+		url := fmt.Sprintf("/citizen/%s", citizen.ID.Hex())
+		fmt.Println(url)
+
+		req, err := http.NewRequest("DELETE", url, nil)
+		assert.NoError(t, err)
+
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusOK, w.Code)
+
+		expected := gin.H{
+			"message": "The citizen has been deleted successfully",
 			"data":    citizen,
 			"error":   "",
 		}
