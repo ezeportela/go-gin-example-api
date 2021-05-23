@@ -3,6 +3,7 @@ package tests
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -12,7 +13,9 @@ import (
 	"github.com/ezeportela/meli-challenge/models"
 	"github.com/ezeportela/meli-challenge/shared"
 	"github.com/gin-gonic/gin"
+	"github.com/kamva/mgm/v3"
 	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func TestRouter(t *testing.T) {
@@ -71,6 +74,30 @@ func TestRouter(t *testing.T) {
 
 		expected := gin.H{
 			"message": "The Citizen has been created successfully",
+			"data":    citizen,
+			"error":   "",
+		}
+
+		assert.Equal(t, shared.StringifyInterface(expected), w.Body.String())
+	})
+
+	t.Run("test get by id citizen endpoint", func(t *testing.T) {
+
+		var citizen models.Citizen
+		err := mgm.Coll(&citizen).First(bson.M{}, &citizen)
+
+		assert.NoError(t, err)
+
+		url := fmt.Sprintf("/citizen/%s", citizen.ID.Hex())
+		req, err := http.NewRequest("GET", url, nil)
+		assert.NoError(t, err)
+
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusOK, w.Code)
+
+		expected := gin.H{
+			"message": "Citizen data",
 			"data":    citizen,
 			"error":   "",
 		}

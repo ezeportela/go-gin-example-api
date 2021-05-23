@@ -30,9 +30,38 @@ func RegisterCitizenController(r *gin.Engine) {
 		}
 
 		c.JSON(http.StatusCreated, gin.H{
-			"message": "The Citizen has been created successfully",
 			"data":    citizen,
 			"error":   "",
+			"message": "The Citizen has been created successfully",
+		})
+	})
+
+	r.GET("/citizen/:id", func(c *gin.Context) {
+		var citizen models.Citizen
+
+		id, ok := c.Params.Get("id")
+
+		if !ok {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":   "The id is required",
+				"data":    nil,
+				"message": "Bad Request",
+			})
+			return
+		}
+
+		if err := mgm.Coll(&citizen).FindByID(id, &citizen); err != nil {
+			c.JSON(http.StatusConflict, gin.H{
+				"error":   err.Error(),
+				"data":    nil,
+				"message": "The Citizen has not been found"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"data":    citizen,
+			"error":   "",
+			"message": "Citizen data",
 		})
 	})
 }
