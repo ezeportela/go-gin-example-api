@@ -25,6 +25,7 @@ func TestRouter(t *testing.T) {
 	conf.Setup("../config/default.yml")
 	conf.DatabaseName = "animalia_test"
 
+	application.SetupDatabase(conf)
 	router := application.SetupRouter(conf)
 
 	mgm.Coll(&models.Citizen{}).DeleteMany(

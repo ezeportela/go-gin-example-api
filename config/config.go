@@ -39,8 +39,7 @@ func (c *Config) LoadEnvironments() {
 		envs[strings.ToLower(e)] = os.Getenv(e)
 	}
 
-	attrs := shared.StringifyInterface(envs)
-	shared.ParseJSON(attrs, c)
+	shared.JsonToStruct(envs, &c)
 }
 
 func (c *Config) Setup(path string) error {

@@ -17,6 +17,11 @@ func ParseJSON(src string, dst interface{}) error {
 	return err
 }
 
+func JsonToStruct(src interface{}, dst interface{}) error {
+	attrs := StringifyInterface(src)
+	return ParseJSON(attrs, &dst)
+}
+
 func CastInterface(src interface{}, dst interface{}) {
 	b, _ := json.Marshal(src)
 	json.Unmarshal(b, &dst)
