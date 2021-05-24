@@ -4,18 +4,20 @@ import (
 	"os"
 	"strings"
 
+	"github.com/ezeportela/meli-challenge/models"
 	"github.com/ezeportela/meli-challenge/shared"
 	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
-	MongoURI     string   `json:"mongo_uri"`
-	ClientId     string   `json:"client_id"`
-	ClientSecret string   `json:"client_secret"`
-	SecretKey    string   `json:"secret_key"`
-	DatabaseName string   `yaml:"database_name"`
-	BasePath     string   `yaml:"base_path"`
-	Environments []string `yaml:"environments"`
+	MongoURI     string        `json:"mongo_uri"`
+	ClientId     string        `json:"client_id"`
+	ClientSecret string        `json:"client_secret"`
+	SecretKey    string        `json:"secret_key"`
+	DatabaseName string        `yaml:"database_name"`
+	BasePath     string        `yaml:"base_path"`
+	Environments []string      `yaml:"environments"`
+	Roles        []models.Role `yaml:"roles"`
 }
 
 func (c *Config) LoadConfig(path string) error {

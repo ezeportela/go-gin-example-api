@@ -6,10 +6,11 @@ import (
 )
 
 func main() {
-	config := config.Config{}
-	config.Setup("./config/default.yml")
+	conf := config.Config{}
+	conf.Setup("./config/default.yml")
 
-	router := application.SetupRouter(config)
+	application.SetupDatabase(conf)
+	router := application.SetupRouter(conf)
 
 	router.Run()
 }

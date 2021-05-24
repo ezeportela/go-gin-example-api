@@ -5,3 +5,22 @@ environments:
   - CLIENT_ID
   - CLIENT_SECRET
   - SECRET_KEY
+roles:
+  - name: First Minister
+    asignations: 1
+    exclude: false
+  - name: Treasurer
+    asignations: 1
+    exclude: false
+  - name: General
+    asignations: 1
+    exclude: false
+  - name: Secretary of State
+    asignations: 0
+    exclude: false
+  - name: Minister of State
+    asignations: 0
+    exclude: false
+  - name: Civil
+    asignations: 0
+    exclude: true

@@ -188,7 +188,6 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 
 	r.POST(shared.MakeRoute(conf.BasePath, "/citizen/batch"), func(c *gin.Context) {
 		var body map[string]interface{}
-		// var citizens []models.Citizen
 
 		if err := c.ShouldBindJSON(&body); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
