@@ -6,6 +6,7 @@ import (
 
 	"github.com/ezeportela/meli-challenge/config"
 	"github.com/ezeportela/meli-challenge/models"
+	"github.com/ezeportela/meli-challenge/repositories"
 	"github.com/ezeportela/meli-challenge/shared"
 	"github.com/gin-gonic/gin"
 	"github.com/kamva/mgm/v3"
@@ -13,6 +14,8 @@ import (
 )
 
 func RegisterCitizenController(r *gin.Engine, conf config.Config) {
+	repository := repositories.CitizenRepository{}
+
 	r.POST(shared.MakeRoute(conf.BasePath, "/citizen"), func(c *gin.Context) {
 		var citizen models.Citizen
 
@@ -69,7 +72,7 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 	})
 
 	r.POST(shared.MakeRoute(conf.BasePath, "/citizen/:id"), func(c *gin.Context) {
-		var citizen models.Citizen
+		var updates map[string]interface{}
 
 		id, ok := c.Params.Get("id")
 
@@ -82,15 +85,7 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 			return
 		}
 
-		if err := mgm.Coll(&citizen).FindByID(id, &citizen); err != nil {
-			c.JSON(http.StatusConflict, gin.H{
-				"error":   err.Error(),
-				"data":    nil,
-				"message": "The citizen has not been found"})
-			return
-		}
-
-		if err := c.ShouldBindJSON(&citizen); err != nil {
+		if err := c.ShouldBindJSON(&updates); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error":   err.Error(),
 				"data":    nil,
@@ -99,7 +94,8 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 			return
 		}
 
-		if err := mgm.Coll(&citizen).Update(&citizen); err != nil {
+		citizen, err := repository.Update(id, updates)
+		if err != nil {
 			c.JSON(http.StatusConflict, gin.H{
 				"error":   err.Error(),
 				"data":    nil,

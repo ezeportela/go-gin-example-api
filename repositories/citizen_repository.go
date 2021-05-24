@@ -12,13 +12,13 @@ func (r *CitizenRepository) GetCollection() *mgm.Collection {
 	return mgm.Coll(&models.Citizen{})
 }
 
-func (r *CitizenRepository) FindById(id string, dst models.Citizen) error {
-	return r.GetCollection().FindByID(id, &dst)
+func (r *CitizenRepository) FindById(id string, dst *models.Citizen) error {
+	return r.GetCollection().FindByID(id, dst)
 }
 
 func (r *CitizenRepository) Update(id string, updates map[string]interface{}) (models.Citizen, error) {
 	var citizen models.Citizen
-	if err := r.FindById(id, citizen); err != nil {
+	if err := r.FindById(id, &citizen); err != nil {
 		return models.Citizen{}, err
 	}
 
