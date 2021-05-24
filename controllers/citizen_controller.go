@@ -1,11 +1,14 @@
 package controllers
 
 import (
+	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/ezeportela/meli-challenge/models"
 	"github.com/gin-gonic/gin"
 	"github.com/kamva/mgm/v3"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func RegisterCitizenController(r *gin.Engine) {
@@ -145,6 +148,91 @@ func RegisterCitizenController(r *gin.Engine) {
 			"data":    citizen,
 			"error":   "",
 			"message": "The citizen has been deleted successfully",
+		})
+	})
+
+	r.POST("/citizen/filter", func(c *gin.Context) {
+		var params map[string]interface{}
+		var citizen models.Citizen
+		var citizens []models.Citizen
+
+		if err := c.ShouldBindJSON(&params); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":   err.Error(),
+				"data":    nil,
+				"message": "Bad Request",
+			})
+			return
+		}
+
+		var limit int64 = 50
+		err := mgm.Coll(&citizen).SimpleFind(
+			&citizens,
+			params,
+			&options.FindOptions{Limit: &limit},
+		)
+
+		if err != nil {
+			c.JSON(http.StatusConflict, gin.H{
+				"error":   err.Error(),
+				"data":    nil,
+				"message": "The citizen has not been found"})
+			return
+		}
+
+		fmt.Println(citizens)
+
+		for _, item := range citizens {
+			fmt.Println(item)
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"data":    citizens,
+			"error":   "",
+			"message": "citizen data",
+		})
+	})
+
+	r.POST("/citizen/batch", func(c *gin.Context) {
+		var body map[string]interface{}
+		// var citizens []models.Citizen
+
+		if err := c.ShouldBindJSON(&body); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":   err.Error(),
+				"data":    nil,
+				"message": "Bad Request",
+			})
+			return
+		}
+
+		data := body["data"]
+		rows := data.([]interface{})
+
+		// rows := make([]interface{}, len(citizens))
+		// for i, item := range citizens {
+		// 	rows[i] = item
+		// }
+
+		result, err := mgm.CollectionByName("citizens").InsertMany(
+			context.Background(),
+			rows,
+		)
+
+		fmt.Println(result)
+
+		if err != nil {
+			c.JSON(http.StatusConflict, gin.H{
+				"error":   err.Error(),
+				"data":    nil,
+				"message": "The citizen has not been created"})
+			return
+		}
+
+		c.JSON(http.StatusCreated, gin.H{
+			"data":    rows,
+			"error":   "",
+			"message": "The citizen has been created successfully",
 		})
 	})
 }

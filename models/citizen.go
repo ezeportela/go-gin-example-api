@@ -13,3 +13,11 @@ type Citizen struct {
 	HasHuman         bool     `json:"has_human" bson:"has_human" binding:"required"`
 	Roles            []string `json:"roles" bson:"roles" binding:"required"`
 }
+
+type CitizenFilter struct {
+	Name        string   `json:"name"`
+	Species     string   `json:"species"`
+	Description string   `json:"description"`
+	HasHuman    bool     `json:"has_human"`
+	Roles       []string `json:"roles"`
+}
