@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/ezeportela/meli-challenge/config"
@@ -9,13 +8,12 @@ import (
 	"github.com/ezeportela/meli-challenge/repositories"
 	"github.com/ezeportela/meli-challenge/shared"
 	"github.com/gin-gonic/gin"
-	"github.com/kamva/mgm/v3"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 	repository := repositories.CitizenRepository{}
 
+	// Insert - POST /citizen
 	r.POST(shared.MakeRoute(conf.BasePath, "/citizen"), func(c *gin.Context) {
 		var citizen models.Citizen
 
@@ -28,7 +26,9 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 			return
 		}
 
-		if err := mgm.Coll(&citizen).Create(&citizen); err != nil {
+		citizen, err := repository.Insert(citizen)
+
+		if err != nil {
 			c.JSON(http.StatusConflict, gin.H{
 				"error":   err.Error(),
 				"data":    nil,
@@ -43,6 +43,7 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 		})
 	})
 
+	// Get by Id - GET /citizen/:id
 	r.GET(shared.MakeRoute(conf.BasePath, "/citizen/:id"), func(c *gin.Context) {
 		var citizen models.Citizen
 
@@ -57,7 +58,9 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 			return
 		}
 
-		if err := mgm.Coll(&citizen).FindByID(id, &citizen); err != nil {
+		err := repository.FindById(id, &citizen)
+
+		if err != nil {
 			c.JSON(http.StatusConflict, gin.H{
 				"error":   err.Error(),
 				"data":    nil,
@@ -71,6 +74,7 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 		})
 	})
 
+	// Update - POST /citizen/:id
 	r.POST(shared.MakeRoute(conf.BasePath, "/citizen/:id"), func(c *gin.Context) {
 		var updates map[string]interface{}
 
@@ -110,9 +114,8 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 		})
 	})
 
+	// Delete - DELETE /citizen/:id
 	r.DELETE(shared.MakeRoute(conf.BasePath, "/citizen/:id"), func(c *gin.Context) {
-		var citizen models.Citizen
-
 		id, ok := c.Params.Get("id")
 
 		if !ok {
@@ -124,15 +127,9 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 			return
 		}
 
-		if err := mgm.Coll(&citizen).FindByID(id, &citizen); err != nil {
-			c.JSON(http.StatusConflict, gin.H{
-				"error":   err.Error(),
-				"data":    nil,
-				"message": "The citizen has not been found"})
-			return
-		}
+		citizen, err := repository.Delete(id)
 
-		if err := mgm.Coll(&citizen).Delete(&citizen); err != nil {
+		if err != nil {
 			c.JSON(http.StatusConflict, gin.H{
 				"error":   err.Error(),
 				"data":    nil,
@@ -147,10 +144,9 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 		})
 	})
 
+	// Filter citizens - /citizen/filter
 	r.POST(shared.MakeRoute(conf.BasePath, "/citizen/filter"), func(c *gin.Context) {
 		var params map[string]interface{}
-		var citizen models.Citizen
-		var citizens []models.Citizen
 
 		if err := c.ShouldBindJSON(&params); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -162,10 +158,9 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 		}
 
 		var limit int64 = 50
-		err := mgm.Coll(&citizen).SimpleFind(
-			&citizens,
+		citizens, err := repository.Filter(
 			params,
-			&options.FindOptions{Limit: &limit},
+			limit,
 		)
 
 		if err != nil {
@@ -182,6 +177,7 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 		})
 	})
 
+	// Insert Many - POST /citizen/batch
 	r.POST(shared.MakeRoute(conf.BasePath, "/citizen/batch"), func(c *gin.Context) {
 		var body map[string]interface{}
 
@@ -197,10 +193,7 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 		data := body["data"]
 		rows := data.([]interface{})
 
-		result, err := mgm.CollectionByName("citizens").InsertMany(
-			context.Background(),
-			rows,
-		)
+		result, err := repository.InsertMany(rows)
 
 		if err != nil {
 			c.JSON(http.StatusConflict, gin.H{
