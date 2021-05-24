@@ -1,3 +1,4 @@
+database_name: animalia
 base_path: /api/v1
 environments:
   - MONGO_URI

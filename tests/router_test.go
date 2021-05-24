@@ -1,15 +1,16 @@
 package tests
 
 import (
-	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/http/httptest"
+	"os"
 	"testing"
 	"time"
 
 	"github.com/ezeportela/meli-challenge/application"
+	"github.com/ezeportela/meli-challenge/config"
 	"github.com/ezeportela/meli-challenge/models"
 	"github.com/ezeportela/meli-challenge/shared"
 	"github.com/gin-gonic/gin"
@@ -19,16 +20,29 @@ import (
 )
 
 func TestRouter(t *testing.T) {
-	router := application.SetupRouter()
+	conf := config.Config{}
+	os.Setenv("MONGO_URI", "mongodb://localhost:27017")
+	conf.Setup("../config/default.yml")
+	conf.DatabaseName = "animalia_test"
+
+	router := application.SetupRouter(conf)
+
+	mgm.Coll(&models.Citizen{}).DeleteMany(
+		context.Background(),
+		map[string]interface{}{},
+	)
 
 	t.Run("test healthcheck endpoint", func(t *testing.T) {
 		dt := time.Now()
-		req, err := http.NewRequest("GET", "/healthcheck", nil)
-		assert.NoError(t, err)
 
-		w := httptest.NewRecorder()
-		router.ServeHTTP(w, req)
-		assert.Equal(t, 200, w.Code)
+		w := CallApi(ApiParams{
+			Conf:               conf,
+			Method:             "GET",
+			Path:               "/healthcheck",
+			Test:               t,
+			Router:             router,
+			ExpectedStatusCode: http.StatusOK,
+		})
 
 		expected := gin.H{
 			"status":    "OK",
@@ -50,19 +64,18 @@ func TestRouter(t *testing.T) {
 			Roles:       []string{"Civil"},
 		}
 
-		body, err := json.Marshal(citizen)
-		b := bytes.NewBuffer(body)
-		assert.NoError(t, err)
-
-		req, err := http.NewRequest("POST", "/citizen", b)
-		assert.NoError(t, err)
-
-		w := httptest.NewRecorder()
-		router.ServeHTTP(w, req)
-		assert.Equal(t, http.StatusCreated, w.Code)
+		w := CallApi(ApiParams{
+			Conf:               conf,
+			Method:             "POST",
+			Path:               "/citizen",
+			Body:               citizen,
+			Test:               t,
+			Router:             router,
+			ExpectedStatusCode: http.StatusCreated,
+		})
 
 		var res map[string]interface{}
-		err = json.Unmarshal(w.Body.Bytes(), &res)
+		err := json.Unmarshal(w.Body.Bytes(), &res)
 		assert.NoError(t, err)
 
 		data := res["data"]
@@ -89,12 +102,15 @@ func TestRouter(t *testing.T) {
 		assert.NoError(t, err)
 
 		url := fmt.Sprintf("/citizen/%s", citizen.ID.Hex())
-		req, err := http.NewRequest("GET", url, nil)
-		assert.NoError(t, err)
 
-		w := httptest.NewRecorder()
-		router.ServeHTTP(w, req)
-		assert.Equal(t, http.StatusOK, w.Code)
+		w := CallApi(ApiParams{
+			Conf:               conf,
+			Method:             "GET",
+			Path:               url,
+			Test:               t,
+			Router:             router,
+			ExpectedStatusCode: http.StatusOK,
+		})
 
 		expected := gin.H{
 			"data":  citizen,
@@ -147,19 +163,18 @@ func TestRouter(t *testing.T) {
 			},
 		}
 
-		body, err := json.Marshal(citizens)
-		b := bytes.NewBuffer(body)
-		assert.NoError(t, err)
-
-		req, err := http.NewRequest("POST", "/citizen/batch", b)
-		assert.NoError(t, err)
-
-		w := httptest.NewRecorder()
-		router.ServeHTTP(w, req)
-		assert.Equal(t, http.StatusCreated, w.Code)
+		w := CallApi(ApiParams{
+			Conf:               conf,
+			Method:             "POST",
+			Path:               "/citizen/batch",
+			Body:               citizens,
+			Test:               t,
+			Router:             router,
+			ExpectedStatusCode: http.StatusCreated,
+		})
 
 		var res map[string]interface{}
-		err = json.Unmarshal(w.Body.Bytes(), &res)
+		err := json.Unmarshal(w.Body.Bytes(), &res)
 		assert.NoError(t, err)
 
 		data := res["data"]
@@ -180,19 +195,18 @@ func TestRouter(t *testing.T) {
 			"name": "Doge",
 		}
 
-		body, err := json.Marshal(filters)
-		b := bytes.NewBuffer(body)
-		assert.NoError(t, err)
-
-		req, err := http.NewRequest("POST", "/citizen/filter", b)
-		assert.NoError(t, err)
-
-		w := httptest.NewRecorder()
-		router.ServeHTTP(w, req)
-		assert.Equal(t, http.StatusOK, w.Code)
+		w := CallApi(ApiParams{
+			Conf:               conf,
+			Method:             "POST",
+			Path:               "/citizen/filter",
+			Body:               filters,
+			Test:               t,
+			Router:             router,
+			ExpectedStatusCode: http.StatusOK,
+		})
 
 		var res map[string]interface{}
-		err = json.Unmarshal(w.Body.Bytes(), &res)
+		err := json.Unmarshal(w.Body.Bytes(), &res)
 		assert.NoError(t, err)
 
 		data := res["data"]
@@ -205,7 +219,6 @@ func TestRouter(t *testing.T) {
 
 		var citizen models.Citizen
 		err := mgm.Coll(&citizen).First(bson.M{}, &citizen)
-
 		assert.NoError(t, err)
 
 		url := fmt.Sprintf("/citizen/%s", citizen.ID.Hex())
@@ -215,16 +228,15 @@ func TestRouter(t *testing.T) {
 			"species": "cat",
 		}
 
-		body, err := json.Marshal(updates)
-		b := bytes.NewBuffer(body)
-		assert.NoError(t, err)
-
-		req, err := http.NewRequest("POST", url, b)
-		assert.NoError(t, err)
-
-		w := httptest.NewRecorder()
-		router.ServeHTTP(w, req)
-		assert.Equal(t, http.StatusOK, w.Code)
+		w := CallApi(ApiParams{
+			Conf:               conf,
+			Method:             "POST",
+			Path:               url,
+			Body:               updates,
+			Test:               t,
+			Router:             router,
+			ExpectedStatusCode: http.StatusOK,
+		})
 
 		var res map[string]interface{}
 		err = json.Unmarshal(w.Body.Bytes(), &res)
@@ -256,12 +268,14 @@ func TestRouter(t *testing.T) {
 
 		url := fmt.Sprintf("/citizen/%s", citizen.ID.Hex())
 
-		req, err := http.NewRequest("DELETE", url, nil)
-		assert.NoError(t, err)
-
-		w := httptest.NewRecorder()
-		router.ServeHTTP(w, req)
-		assert.Equal(t, http.StatusOK, w.Code)
+		w := CallApi(ApiParams{
+			Conf:               conf,
+			Method:             "DELETE",
+			Path:               url,
+			Test:               t,
+			Router:             router,
+			ExpectedStatusCode: http.StatusOK,
+		})
 
 		expected := gin.H{
 			"message": "The citizen has been deleted successfully",

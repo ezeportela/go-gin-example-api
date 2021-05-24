@@ -4,14 +4,16 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/ezeportela/meli-challenge/config"
 	"github.com/ezeportela/meli-challenge/models"
+	"github.com/ezeportela/meli-challenge/shared"
 	"github.com/gin-gonic/gin"
 	"github.com/kamva/mgm/v3"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func RegisterCitizenController(r *gin.Engine) {
-	r.POST("/citizen", func(c *gin.Context) {
+func RegisterCitizenController(r *gin.Engine, conf config.Config) {
+	r.POST(shared.MakeRoute(conf.BasePath, "/citizen"), func(c *gin.Context) {
 		var citizen models.Citizen
 
 		if err := c.ShouldBindJSON(&citizen); err != nil {
@@ -38,7 +40,7 @@ func RegisterCitizenController(r *gin.Engine) {
 		})
 	})
 
-	r.GET("/citizen/:id", func(c *gin.Context) {
+	r.GET(shared.MakeRoute(conf.BasePath, "/citizen/:id"), func(c *gin.Context) {
 		var citizen models.Citizen
 
 		id, ok := c.Params.Get("id")
@@ -66,7 +68,7 @@ func RegisterCitizenController(r *gin.Engine) {
 		})
 	})
 
-	r.POST("/citizen/:id", func(c *gin.Context) {
+	r.POST(shared.MakeRoute(conf.BasePath, "/citizen/:id"), func(c *gin.Context) {
 		var citizen models.Citizen
 
 		id, ok := c.Params.Get("id")
@@ -112,7 +114,7 @@ func RegisterCitizenController(r *gin.Engine) {
 		})
 	})
 
-	r.DELETE("/citizen/:id", func(c *gin.Context) {
+	r.DELETE(shared.MakeRoute(conf.BasePath, "/citizen/:id"), func(c *gin.Context) {
 		var citizen models.Citizen
 
 		id, ok := c.Params.Get("id")
@@ -149,7 +151,7 @@ func RegisterCitizenController(r *gin.Engine) {
 		})
 	})
 
-	r.POST("/citizen/filter", func(c *gin.Context) {
+	r.POST(shared.MakeRoute(conf.BasePath, "/citizen/filter"), func(c *gin.Context) {
 		var params map[string]interface{}
 		var citizen models.Citizen
 		var citizens []models.Citizen
@@ -184,7 +186,7 @@ func RegisterCitizenController(r *gin.Engine) {
 		})
 	})
 
-	r.POST("/citizen/batch", func(c *gin.Context) {
+	r.POST(shared.MakeRoute(conf.BasePath, "/citizen/batch"), func(c *gin.Context) {
 		var body map[string]interface{}
 		// var citizens []models.Citizen
 

@@ -3,6 +3,7 @@ package shared
 import (
 	"encoding/json"
 	"io/ioutil"
+	"strings"
 	"time"
 )
 
@@ -29,4 +30,8 @@ func ReadFile(path string) ([]byte, error) {
 	data, err := ioutil.ReadFile(path)
 
 	return data, err
+}
+
+func MakeRoute(basePath string, path string) string {
+	return strings.Join([]string{basePath, path}, "")
 }
