@@ -97,12 +97,108 @@ func TestRouter(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 
 		expected := gin.H{
-			"message": "citizen data",
-			"data":    citizen,
-			"error":   "",
+			"data":  citizen,
+			"error": "",
 		}
 
 		assert.Equal(t, shared.StringifyInterface(expected), w.Body.String())
+	})
+
+	t.Run("test insert citizens endpoint", func(t *testing.T) {
+
+		citizens := map[string]interface{}{
+			"data": []map[string]interface{}{
+				{
+					"name":        "Doge",
+					"species":     "dog",
+					"description": "the first citizen",
+					"weight":      30,
+					"height":      40,
+					"photo_url":   "https://phantom-marca.unidadeditorial.es/252acdd64f48851f815c16049a789f23/resize/1320/f/jpg/assets/multimedia/imagenes/2021/04/19/16188479459744.jpg",
+					"has_human":   false,
+					"roles": []string{
+						"First Minister",
+					},
+				},
+				{
+					"name":        "Kitty",
+					"species":     "cat",
+					"description": "the second citizen",
+					"weight":      5,
+					"height":      20,
+					"photo_url":   "https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/cat_relaxing_on_patio_other/1800x1200_cat_relaxing_on_patio_other.jpg",
+					"has_human":   true,
+					"roles": []string{
+						"Treasurer",
+					},
+				},
+				{
+					"name":        "Leonardo",
+					"species":     "turtle",
+					"description": "the third citizen",
+					"weight":      2,
+					"height":      10,
+					"photo_url":   "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Florida_Box_Turtle_Digon3_re-edited.jpg/1200px-Florida_Box_Turtle_Digon3_re-edited.jpg",
+					"has_human":   false,
+					"roles": []string{
+						"General",
+					},
+				},
+			},
+		}
+
+		body, err := json.Marshal(citizens)
+		b := bytes.NewBuffer(body)
+		assert.NoError(t, err)
+
+		req, err := http.NewRequest("POST", "/citizen/batch", b)
+		assert.NoError(t, err)
+
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusCreated, w.Code)
+
+		var res map[string]interface{}
+		err = json.Unmarshal(w.Body.Bytes(), &res)
+		assert.NoError(t, err)
+
+		data := res["data"]
+		var resMap map[string]interface{}
+		shared.CastInterface(data, &resMap)
+		insertedIDs := resMap["InsertedIDs"]
+		arrInsertedIDs := insertedIDs.([]interface{})
+
+		expected := citizens["data"]
+		arrExpected := expected.([]map[string]interface{})
+
+		assert.Equal(t, len(arrExpected), len(arrInsertedIDs))
+	})
+
+	t.Run("test filter citizens endpoint", func(t *testing.T) {
+
+		filters := map[string]string{
+			"name": "Doge",
+		}
+
+		body, err := json.Marshal(filters)
+		b := bytes.NewBuffer(body)
+		assert.NoError(t, err)
+
+		req, err := http.NewRequest("POST", "/citizen/filter", b)
+		assert.NoError(t, err)
+
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusOK, w.Code)
+
+		var res map[string]interface{}
+		err = json.Unmarshal(w.Body.Bytes(), &res)
+		assert.NoError(t, err)
+
+		data := res["data"]
+		citizens := data.([]interface{})
+
+		assert.GreaterOrEqual(t, len(citizens), 1)
 	})
 
 	t.Run("test update citizen endpoint", func(t *testing.T) {
@@ -151,33 +247,6 @@ func TestRouter(t *testing.T) {
 		assert.Equal(t, shared.StringifyInterface(expected), w.Body.String())
 	})
 
-	t.Run("test filter citizens endpoint", func(t *testing.T) {
-
-		filters := map[string]string{
-			"name": "Doge",
-		}
-
-		body, err := json.Marshal(filters)
-		b := bytes.NewBuffer(body)
-		assert.NoError(t, err)
-
-		req, err := http.NewRequest("POST", "/citizen/filter", b)
-		assert.NoError(t, err)
-
-		w := httptest.NewRecorder()
-		router.ServeHTTP(w, req)
-		assert.Equal(t, http.StatusOK, w.Code)
-
-		var res map[string]interface{}
-		err = json.Unmarshal(w.Body.Bytes(), &res)
-		assert.NoError(t, err)
-
-		data := res["data"]
-		citizens := data.([]interface{})
-
-		assert.GreaterOrEqual(t, len(citizens), 1)
-	})
-
 	t.Run("test delete citizen endpoint", func(t *testing.T) {
 
 		var citizen models.Citizen
@@ -186,7 +255,6 @@ func TestRouter(t *testing.T) {
 		assert.NoError(t, err)
 
 		url := fmt.Sprintf("/citizen/%s", citizen.ID.Hex())
-		fmt.Println(url)
 
 		req, err := http.NewRequest("DELETE", url, nil)
 		assert.NoError(t, err)

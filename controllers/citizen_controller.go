@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/ezeportela/meli-challenge/models"
@@ -62,9 +61,8 @@ func RegisterCitizenController(r *gin.Engine) {
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"data":    citizen,
-			"error":   "",
-			"message": "citizen data",
+			"data":  citizen,
+			"error": "",
 		})
 	})
 
@@ -176,20 +174,13 @@ func RegisterCitizenController(r *gin.Engine) {
 			c.JSON(http.StatusConflict, gin.H{
 				"error":   err.Error(),
 				"data":    nil,
-				"message": "The citizen has not been found"})
+				"message": "The citizens have not been found"})
 			return
 		}
 
-		fmt.Println(citizens)
-
-		for _, item := range citizens {
-			fmt.Println(item)
-		}
-
 		c.JSON(http.StatusOK, gin.H{
-			"data":    citizens,
-			"error":   "",
-			"message": "citizen data",
+			"data":  citizens,
+			"error": "",
 		})
 	})
 
@@ -209,30 +200,23 @@ func RegisterCitizenController(r *gin.Engine) {
 		data := body["data"]
 		rows := data.([]interface{})
 
-		// rows := make([]interface{}, len(citizens))
-		// for i, item := range citizens {
-		// 	rows[i] = item
-		// }
-
 		result, err := mgm.CollectionByName("citizens").InsertMany(
 			context.Background(),
 			rows,
 		)
 
-		fmt.Println(result)
-
 		if err != nil {
 			c.JSON(http.StatusConflict, gin.H{
 				"error":   err.Error(),
 				"data":    nil,
-				"message": "The citizen has not been created"})
+				"message": "The citizens have not been created"})
 			return
 		}
 
 		c.JSON(http.StatusCreated, gin.H{
-			"data":    rows,
+			"data":    result,
 			"error":   "",
-			"message": "The citizen has been created successfully",
+			"message": "The citizens have been created successfully",
 		})
 	})
 }
