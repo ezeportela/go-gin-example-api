@@ -11,6 +11,7 @@ import (
 
 type Config struct {
 	MongoURI     string        `json:"mongo_uri"`
+	Version      string        `yaml:"version"`
 	DatabaseName string        `yaml:"database_name"`
 	BasePath     string        `yaml:"base_path"`
 	Environments []string      `yaml:"environments"`

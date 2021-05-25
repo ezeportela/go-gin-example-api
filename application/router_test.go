@@ -1,4 +1,4 @@
-package tests
+package application
 
 import (
 	"context"
@@ -9,10 +9,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ezeportela/meli-challenge/application"
 	"github.com/ezeportela/meli-challenge/config"
 	"github.com/ezeportela/meli-challenge/models"
+	"github.com/ezeportela/meli-challenge/repositories"
 	"github.com/ezeportela/meli-challenge/shared"
+	"github.com/ezeportela/meli-challenge/tests"
 	"github.com/gin-gonic/gin"
 	"github.com/kamva/mgm/v3"
 	"github.com/stretchr/testify/assert"
@@ -25,8 +26,8 @@ func TestRouter(t *testing.T) {
 	conf.Setup("../config/default.yml")
 	conf.DatabaseName = "animalia_test"
 
-	application.SetupDatabase(conf)
-	router := application.SetupRouter(conf)
+	SetupDatabase(conf)
+	router := SetupRouter(conf)
 
 	mgm.Coll(&models.Citizen{}).DeleteMany(
 		context.Background(),
@@ -36,7 +37,7 @@ func TestRouter(t *testing.T) {
 	t.Run("test healthcheck endpoint", func(t *testing.T) {
 		dt := time.Now()
 
-		w := CallApi(ApiParams{
+		w := tests.CallApi(tests.ApiParams{
 			Conf:               conf,
 			Method:             "GET",
 			Path:               "/healthcheck",
@@ -46,6 +47,7 @@ func TestRouter(t *testing.T) {
 		})
 
 		expected := gin.H{
+			"version":   conf.Version,
 			"status":    "OK",
 			"timestamp": shared.FormatDateTime(dt),
 		}
@@ -65,7 +67,7 @@ func TestRouter(t *testing.T) {
 			Roles:       []string{"Civil"},
 		}
 
-		w := CallApi(ApiParams{
+		w := tests.CallApi(tests.ApiParams{
 			Conf:               conf,
 			Method:             "POST",
 			Path:               "/citizen",
@@ -104,7 +106,7 @@ func TestRouter(t *testing.T) {
 
 		url := fmt.Sprintf("/citizen/%s", citizen.ID.Hex())
 
-		w := CallApi(ApiParams{
+		w := tests.CallApi(tests.ApiParams{
 			Conf:               conf,
 			Method:             "GET",
 			Path:               url,
@@ -164,7 +166,7 @@ func TestRouter(t *testing.T) {
 			},
 		}
 
-		w := CallApi(ApiParams{
+		w := tests.CallApi(tests.ApiParams{
 			Conf:               conf,
 			Method:             "POST",
 			Path:               "/citizen/batch",
@@ -191,12 +193,32 @@ func TestRouter(t *testing.T) {
 	})
 
 	t.Run("test filter citizens endpoint", func(t *testing.T) {
+		repository := repositories.CitizenRepository{}
+
+		citizen := models.Citizen{
+			Name:        "Doge",
+			Species:     "dog",
+			Description: "A citizen",
+			Weight:      30,
+			Height:      40,
+			PhotoUrl:    "https://",
+			HasHuman:    true,
+			Roles:       []string{"First Minister"},
+		}
+
+		ok, err := repository.CheckRoles(citizen)
+
+		assert.NoError(t, err)
+		assert.False(t, ok)
+	})
+
+	t.Run("test filter citizens endpoint", func(t *testing.T) {
 
 		filters := map[string]string{
 			"name": "Doge",
 		}
 
-		w := CallApi(ApiParams{
+		w := tests.CallApi(tests.ApiParams{
 			Conf:               conf,
 			Method:             "POST",
 			Path:               "/citizen/filter",
@@ -229,7 +251,7 @@ func TestRouter(t *testing.T) {
 			"species": "cat",
 		}
 
-		w := CallApi(ApiParams{
+		w := tests.CallApi(tests.ApiParams{
 			Conf:               conf,
 			Method:             "POST",
 			Path:               url,
@@ -269,7 +291,7 @@ func TestRouter(t *testing.T) {
 
 		url := fmt.Sprintf("/citizen/%s", citizen.ID.Hex())
 
-		w := CallApi(ApiParams{
+		w := tests.CallApi(tests.ApiParams{
 			Conf:               conf,
 			Method:             "DELETE",
 			Path:               url,

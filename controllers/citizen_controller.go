@@ -3,18 +3,18 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/ezeportela/meli-challenge/config"
 	"github.com/ezeportela/meli-challenge/models"
 	"github.com/ezeportela/meli-challenge/repositories"
-	"github.com/ezeportela/meli-challenge/shared"
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterCitizenController(r *gin.Engine, conf config.Config) {
-	repository := repositories.CitizenRepository{}
+type CitizenController struct {
+	Repository repositories.CitizenRepository
+}
 
-	// Insert - POST /citizen
-	r.POST(shared.MakeRoute(conf.BasePath, "/citizen"), func(c *gin.Context) {
+// CreateHandler - POST /citizen
+func (ctrl *CitizenController) CreateHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
 		var citizen models.Citizen
 
 		if err := c.ShouldBindJSON(&citizen); err != nil {
@@ -26,7 +26,7 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 			return
 		}
 
-		citizen, err := repository.Insert(citizen)
+		citizen, err := ctrl.Repository.Insert(citizen)
 
 		if err != nil {
 			c.JSON(http.StatusConflict, gin.H{
@@ -41,10 +41,12 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 			"error":   "",
 			"message": "The citizen has been created successfully",
 		})
-	})
+	}
+}
 
-	// Get by Id - GET /citizen/:id
-	r.GET(shared.MakeRoute(conf.BasePath, "/citizen/:id"), func(c *gin.Context) {
+// GetByIdHandler - GET /citizen/:id
+func (ctrl *CitizenController) GetByIdHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
 		var citizen models.Citizen
 
 		id, ok := c.Params.Get("id")
@@ -58,7 +60,7 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 			return
 		}
 
-		err := repository.FindById(id, &citizen)
+		err := ctrl.Repository.FindById(id, &citizen)
 
 		if err != nil {
 			c.JSON(http.StatusConflict, gin.H{
@@ -72,10 +74,12 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 			"data":  citizen,
 			"error": "",
 		})
-	})
+	}
+}
 
-	// Update - POST /citizen/:id
-	r.POST(shared.MakeRoute(conf.BasePath, "/citizen/:id"), func(c *gin.Context) {
+// UpdateHandler - POST /citizen/:id
+func (ctrl *CitizenController) UpdateHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
 		var updates map[string]interface{}
 
 		id, ok := c.Params.Get("id")
@@ -98,7 +102,7 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 			return
 		}
 
-		citizen, err := repository.Update(id, updates)
+		citizen, err := ctrl.Repository.Update(id, updates)
 		if err != nil {
 			c.JSON(http.StatusConflict, gin.H{
 				"error":   err.Error(),
@@ -112,10 +116,12 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 			"error":   "",
 			"message": "The citizen has been updated successfully",
 		})
-	})
+	}
+}
 
-	// Delete - DELETE /citizen/:id
-	r.DELETE(shared.MakeRoute(conf.BasePath, "/citizen/:id"), func(c *gin.Context) {
+// DeleteHandler - DELETE /citizen/:id
+func (ctrl *CitizenController) DeleteHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
 		id, ok := c.Params.Get("id")
 
 		if !ok {
@@ -127,7 +133,7 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 			return
 		}
 
-		citizen, err := repository.Delete(id)
+		citizen, err := ctrl.Repository.Delete(id)
 
 		if err != nil {
 			c.JSON(http.StatusConflict, gin.H{
@@ -142,10 +148,12 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 			"error":   "",
 			"message": "The citizen has been deleted successfully",
 		})
-	})
+	}
+}
 
-	// Filter citizens - /citizen/filter
-	r.POST(shared.MakeRoute(conf.BasePath, "/citizen/filter"), func(c *gin.Context) {
+// FilterHandler - POST /citizen/filter
+func (ctrl *CitizenController) FilterHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
 		var params map[string]interface{}
 
 		if err := c.ShouldBindJSON(&params); err != nil {
@@ -158,7 +166,7 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 		}
 
 		var limit int64 = 50
-		citizens, err := repository.Filter(
+		citizens, err := ctrl.Repository.Filter(
 			params,
 			limit,
 		)
@@ -175,10 +183,12 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 			"data":  citizens,
 			"error": "",
 		})
-	})
+	}
+}
 
-	// Insert Many - POST /citizen/batch
-	r.POST(shared.MakeRoute(conf.BasePath, "/citizen/batch"), func(c *gin.Context) {
+// InsertManyHandler - POST /citizen/batch
+func (ctrl *CitizenController) InsertManyHandler() gin.HandlerFunc {
+	return func(c *gin.Context) {
 		var body map[string]interface{}
 
 		if err := c.ShouldBindJSON(&body); err != nil {
@@ -191,9 +201,10 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 		}
 
 		data := body["data"]
+
 		rows := data.([]interface{})
 
-		result, err := repository.InsertMany(rows)
+		result, err := ctrl.Repository.InsertMany(rows)
 
 		if err != nil {
 			c.JSON(http.StatusConflict, gin.H{
@@ -208,5 +219,5 @@ func RegisterCitizenController(r *gin.Engine, conf config.Config) {
 			"error":   "",
 			"message": "The citizens have been created successfully",
 		})
-	})
+	}
 }
