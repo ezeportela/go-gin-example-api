@@ -34,3 +34,17 @@ func (r *RoleRepository) Fixtures(conf config.Config) {
 func (r *RoleRepository) FindById(id string, dst models.Role) error {
 	return r.GetColl().FindByID(id, &dst)
 }
+
+func (r *RoleRepository) GetAll() ([]models.Role, error) {
+	var roles []models.Role
+	err := r.GetColl().SimpleFind(
+		&roles,
+		map[string]interface{}{},
+	)
+
+	if err != nil {
+		return []models.Role{}, err
+	}
+
+	return roles, nil
+}

@@ -3,6 +3,7 @@ module github.com/ezeportela/meli-challenge
 go 1.16
 
 require (
+	github.com/ahl5esoft/golang-underscore v2.0.0+incompatible
 	github.com/gin-gonic/gin v1.7.2
 	github.com/go-playground/validator/v10 v10.6.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
