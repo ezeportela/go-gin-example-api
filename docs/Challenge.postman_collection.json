@@ -1,0 +1,526 @@
+{
+	"info": {
+		"_postman_id": "d1ae0e80-70d0-4dfa-a828-df711fae6a13",
+		"name": "Challenge",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Healthcheck",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/v1/healthcheck",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"healthcheck"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Healthcheck",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/v1/healthcheck",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"healthcheck"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 25 May 2021 03:09:24 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "53"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"status\": \"OK\",\n    \"timestamp\": \"2021-05-25T00:09:24.555\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Get Citizen by Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/v1/citizen/:id",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"citizen",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "60abb3b7021be08bd5fbc689"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Get Citizen by Id",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/v1/citizen/:id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"citizen",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "60abb3b7021be08bd5fbc689"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 25 May 2021 03:11:34 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "271"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"id\": \"60abb3b7021be08bd5fbc689\",\n        \"created_at\": \"2021-05-24T14:09:59.607Z\",\n        \"updated_at\": \"2021-05-24T14:09:59.607Z\",\n        \"name\": \"Doge\",\n        \"species\": \"dog\",\n        \"description\": \"A citizen\",\n        \"weight\": 30,\n        \"height\": 40,\n        \"photo_url\": \"https://\",\n        \"has_human\": true,\n        \"roles\": [\n            \"Civil\"\n        ]\n    },\n    \"error\": \"\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Create Citizen",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Doge\",\n    \"species\": \"dog\",\n    \"description\": \"the first citizen\",\n    \"weight\": 30,\n    \"height\": 40,\n    \"photo_url\": \"https://phantom-marca.unidadeditorial.es/252acdd64f48851f815c16049a789f23/resize/1320/f/jpg/assets/multimedia/imagenes/2021/04/19/16188479459744.jpg\",\n    \"has_human\": true,\n    \"roles\": [\n        \"First Minister\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/v1/citizen",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"citizen"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Create Citizen",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Doge\",\n    \"species\": \"dog\",\n    \"description\": \"the first citizen\",\n    \"weight\": 30,\n    \"height\": 40,\n    \"photo_url\": \"https://phantom-marca.unidadeditorial.es/252acdd64f48851f815c16049a789f23/resize/1320/f/jpg/assets/multimedia/imagenes/2021/04/19/16188479459744.jpg\",\n    \"has_human\": true,\n    \"roles\": [\n        \"First Minister\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v1/citizen",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"citizen"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 25 May 2021 03:09:46 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "494"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"id\": \"60ac6a7a38b2a4b3cbc1525a\",\n        \"created_at\": \"2021-05-25T03:09:46.902773655Z\",\n        \"updated_at\": \"2021-05-25T03:09:46.902773844Z\",\n        \"name\": \"Doge\",\n        \"species\": \"dog\",\n        \"description\": \"the first citizen\",\n        \"weight\": 30,\n        \"height\": 40,\n        \"photo_url\": \"https://phantom-marca.unidadeditorial.es/252acdd64f48851f815c16049a789f23/resize/1320/f/jpg/assets/multimedia/imagenes/2021/04/19/16188479459744.jpg\",\n        \"has_human\": true,\n        \"roles\": [\n            \"First Minister\"\n        ]\n    },\n    \"error\": \"\",\n    \"message\": \"The citizen has been created successfully\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Update Citizen",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Kitty\",\n    \"species\": \"cat\",\n    \"description\": \"the third citizen\",\n    \"roles\": [\n        \"Secretary of State\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/v1/citizen/:id",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"citizen",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "60abb3b7021be08bd5fbc68a"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Update Citizen",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Kitty\",\n    \"species\": \"cat\",\n    \"description\": \"the third citizen\",\n    \"roles\": [\n        \"Secretary of State\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v1/citizen/:id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"citizen",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "60abb3b7021be08bd5fbc68a"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 25 May 2021 03:24:49 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "490"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"id\": \"60abb3b7021be08bd5fbc68a\",\n        \"created_at\": \"0001-01-01T00:00:00Z\",\n        \"updated_at\": \"2021-05-25T03:24:49.580286456Z\",\n        \"name\": \"Kitty\",\n        \"species\": \"cat\",\n        \"description\": \"the third citizen\",\n        \"weight\": 30,\n        \"height\": 40,\n        \"photo_url\": \"https://phantom-marca.unidadeditorial.es/252acdd64f48851f815c16049a789f23/resize/1320/f/jpg/assets/multimedia/imagenes/2021/04/19/16188479459744.jpg\",\n        \"has_human\": false,\n        \"roles\": [\n            \"Secretary of State\"\n        ]\n    },\n    \"error\": \"\",\n    \"message\": \"The citizen has been updated successfully\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Filter Citizens",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Doge\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/v1/citizen/filter",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"citizen",
+						"filter"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Filter Citizens",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Kitty\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v1/citizen/filter",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"citizen",
+								"filter"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 25 May 2021 03:13:38 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "1254"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": [\n        {\n            \"id\": \"60abb3b294456025d6427a79\",\n            \"created_at\": \"0001-01-01T00:00:00Z\",\n            \"updated_at\": \"0001-01-01T00:00:00Z\",\n            \"name\": \"Kitty\",\n            \"species\": \"cat\",\n            \"description\": \"the second citizen\",\n            \"weight\": 5,\n            \"height\": 20,\n            \"photo_url\": \"https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/cat_relaxing_on_patio_other/1800x1200_cat_relaxing_on_patio_other.jpg\",\n            \"has_human\": true,\n            \"roles\": [\n                \"Treasurer\"\n            ]\n        },\n        {\n            \"id\": \"60abb3b7021be08bd5fbc68b\",\n            \"created_at\": \"0001-01-01T00:00:00Z\",\n            \"updated_at\": \"0001-01-01T00:00:00Z\",\n            \"name\": \"Kitty\",\n            \"species\": \"cat\",\n            \"description\": \"the second citizen\",\n            \"weight\": 5,\n            \"height\": 20,\n            \"photo_url\": \"https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/cat_relaxing_on_patio_other/1800x1200_cat_relaxing_on_patio_other.jpg\",\n            \"has_human\": true,\n            \"roles\": [\n                \"Treasurer\"\n            ]\n        },\n        {\n            \"id\": \"60ac6a9638b2a4b3cbc1525c\",\n            \"created_at\": \"0001-01-01T00:00:00Z\",\n            \"updated_at\": \"0001-01-01T00:00:00Z\",\n            \"name\": \"Kitty\",\n            \"species\": \"cat\",\n            \"description\": \"the second citizen\",\n            \"weight\": 5,\n            \"height\": 20,\n            \"photo_url\": \"https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/cat_relaxing_on_patio_other/1800x1200_cat_relaxing_on_patio_other.jpg\",\n            \"has_human\": true,\n            \"roles\": [\n                \"Treasurer\"\n            ]\n        }\n    ],\n    \"error\": \"\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Create Citizen Batch",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"data\": [\n        {\n            \"name\": \"Doge\",\n            \"species\": \"dog\",\n            \"description\": \"the first citizen\",\n            \"weight\": 30,\n            \"height\": 40,\n            \"photo_url\": \"https://phantom-marca.unidadeditorial.es/252acdd64f48851f815c16049a789f23/resize/1320/f/jpg/assets/multimedia/imagenes/2021/04/19/16188479459744.jpg\",\n            \"has_human\": false,\n            \"roles\": [\n                \"First Minister\"\n            ]\n        },\n        {\n            \"name\": \"Kitty\",\n            \"species\": \"cat\",\n            \"description\": \"the second citizen\",\n            \"weight\": 5,\n            \"height\": 20,\n            \"photo_url\": \"https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/cat_relaxing_on_patio_other/1800x1200_cat_relaxing_on_patio_other.jpg\",\n            \"has_human\": true,\n            \"roles\": [\n                \"Treasurer\"\n            ]\n        },\n        {\n            \"name\": \"Leonardo\",\n            \"species\": \"turtle\",\n            \"description\": \"the third citizen\",\n            \"weight\": 2,\n            \"height\": 10,\n            \"photo_url\": \"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Florida_Box_Turtle_Digon3_re-edited.jpg/1200px-Florida_Box_Turtle_Digon3_re-edited.jpg\",\n            \"has_human\": false,\n            \"roles\": [\n                \"General\"\n            ]\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/api/v1/citizen/batch",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"citizen",
+						"batch"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Create Citizen Batch",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"data\": [\n        {\n            \"name\": \"Doge\",\n            \"species\": \"dog\",\n            \"description\": \"the first citizen\",\n            \"weight\": 30,\n            \"height\": 40,\n            \"photo_url\": \"https://phantom-marca.unidadeditorial.es/252acdd64f48851f815c16049a789f23/resize/1320/f/jpg/assets/multimedia/imagenes/2021/04/19/16188479459744.jpg\",\n            \"has_human\": false,\n            \"roles\": [\n                \"First Minister\"\n            ]\n        },\n        {\n            \"name\": \"Kitty\",\n            \"species\": \"cat\",\n            \"description\": \"the second citizen\",\n            \"weight\": 5,\n            \"height\": 20,\n            \"photo_url\": \"https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/cat_relaxing_on_patio_other/1800x1200_cat_relaxing_on_patio_other.jpg\",\n            \"has_human\": true,\n            \"roles\": [\n                \"Treasurer\"\n            ]\n        },\n        {\n            \"name\": \"Leonardo\",\n            \"species\": \"turtle\",\n            \"description\": \"the third citizen\",\n            \"weight\": 2,\n            \"height\": 10,\n            \"photo_url\": \"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Florida_Box_Turtle_Digon3_re-edited.jpg/1200px-Florida_Box_Turtle_Digon3_re-edited.jpg\",\n            \"has_human\": false,\n            \"roles\": [\n                \"General\"\n            ]\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/api/v1/citizen/batch",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"citizen",
+								"batch"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 25 May 2021 03:10:14 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "174"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"InsertedIDs\": [\n            \"60ac6a9638b2a4b3cbc1525b\",\n            \"60ac6a9638b2a4b3cbc1525c\",\n            \"60ac6a9638b2a4b3cbc1525d\"\n        ]\n    },\n    \"error\": \"\",\n    \"message\": \"The citizens have been created successfully\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Delete Citizen by Id",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/v1/citizen/:id",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"citizen",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "60abb3b7021be08bd5fbc689"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Delete Citizen by Id",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/v1/citizen/:id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"citizen",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "60abb3b7021be08bd5fbc689"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 25 May 2021 03:12:06 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "325"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"data\": {\n        \"id\": \"60abb3b7021be08bd5fbc689\",\n        \"created_at\": \"2021-05-24T14:09:59.607Z\",\n        \"updated_at\": \"2021-05-24T14:09:59.607Z\",\n        \"name\": \"Doge\",\n        \"species\": \"dog\",\n        \"description\": \"A citizen\",\n        \"weight\": 30,\n        \"height\": 40,\n        \"photo_url\": \"https://\",\n        \"has_human\": true,\n        \"roles\": [\n            \"Civil\"\n        ]\n    },\n    \"error\": \"\",\n    \"message\": \"The citizen has been deleted successfully\"\n}"
+				}
+			]
+		}
+	]
+}
